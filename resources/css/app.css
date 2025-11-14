@@ -1,3 +1,7 @@
+/* Import separated CSS files - must be before @tailwind */
+@import './welcome.css';
+@import './builder.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
