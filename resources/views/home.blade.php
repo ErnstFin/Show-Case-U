@@ -18,9 +18,23 @@
 
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div class="lg:col-span-2 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                        Riwayat CV ATS ({{ $totalFiles }})
-                    </h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                            Riwayat CV ATS ({{ $totalFiles }})
+                        </h3>
+                        @if (!$files->isEmpty())
+                            <form method="POST" action="{{ route('home.files.destroyAll') }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus semua histori CV ATS? Tindakan ini tidak dapat dibatalkan.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Hapus Semua
+                                </button>
+                            </form>
+                        @endif
+                    </div>
 
                     @if ($files->isEmpty())
                         <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -62,14 +76,26 @@
                                             <td class="px-4 py-3 text-gray-600 dark:text-gray-200">
                                                 {{ $file->updated_at->diffForHumans() }}
                                             </td>
-                                            <td class="px-4 py-3 text-right">
-                                                <a href="{{ route('home.files.download', $file) }}"
-                                                   class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 10.5L12 15m0 0l4.5-4.5M12 15V3"/>
-                                                    </svg>
-                                                    Download PDF
-                                                </a>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-3 justify-end">
+                                                    <a href="{{ route('home.files.download', $file) }}"
+                                                       class="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 10.5L12 15m0 0l4.5-4.5M12 15V3"/>
+                                                        </svg>
+                                                        Download
+                                                    </a>
+                                                    <form method="POST" action="{{ route('home.files.destroy', $file) }}" onsubmit="return confirm('Apakah Anda yakin ingin menghapus file ini?');" class="inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="inline-flex items-center gap-2 text-sm font-medium text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                            </svg>
+                                                            Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

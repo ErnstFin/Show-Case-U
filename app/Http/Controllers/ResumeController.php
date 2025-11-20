@@ -122,10 +122,15 @@ class ResumeController extends Controller
 
         $html = View::make('resume.pdf-data', ['data' => $validated])->render();
 
+        // Optimize Dompdf options for faster rendering
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
+        $options->set('isRemoteEnabled', false); // Disable remote for faster processing
         $options->set('defaultFont', 'Arial');
+        $options->set('isPhpEnabled', false); // Disable PHP for security and speed
+        $options->set('isJavascriptEnabled', false); // Disable JS for speed
+        $options->set('dpi', 96); // Lower DPI for faster rendering (still good quality)
+        $options->set('enableCssFloat', false); // Disable CSS float for speed
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
@@ -137,16 +142,20 @@ class ResumeController extends Controller
         $fullName = trim(($validated['first_name'] ?? '') . ' ' . ($validated['last_name'] ?? ''));
         $filename = ($fullName ? str_replace(' ', '_', $fullName) : 'resume') . '_CV.pdf';
 
+        // Save to database and storage (optimized for speed)
         if ($request->user()) {
             $user = $request->user();
+            $disk = config('filesystems.default');
+            $path = 'resumes/'.$user->id.'/'.now()->format('Ymd_His').'_'.Str::random(6).'.pdf';
+            
+            // Save file first (fast operation)
+            Storage::disk($disk)->put($path, $pdfOutput);
+
+            // Then save to database (also fast)
             Resume::create([
                 'user_id' => $user->id,
                 ...$validated,
             ]);
-
-            $disk = config('filesystems.default');
-            $path = 'resumes/'.$user->id.'/'.now()->format('Ymd_His').'_'.Str::random(6).'.pdf';
-            Storage::disk($disk)->put($path, $pdfOutput);
 
             FileEntry::create([
                 'user_id' => $user->id,
@@ -157,10 +166,14 @@ class ResumeController extends Controller
             ]);
         }
 
+        // Return optimized response with proper headers for fast download
         return response()->streamDownload(function () use ($pdfOutput) {
             echo $pdfOutput;
         }, $filename, [
             'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'no-cache, must-revalidate',
+            'Pragma' => 'no-cache',
         ]);
     }
 }

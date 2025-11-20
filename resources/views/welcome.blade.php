@@ -54,7 +54,12 @@
                         <a href="{{ route('builder') }}">Builder</a>
 
                         @auth
+                            <a href="{{ url('/home') }}" class="nav-button">Home</a>
                             <a href="{{ url('/dashboard') }}" class="nav-button">Dashboard</a>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="nav-button">Keluar</button>
+                            </form>
                         @else
                             <a href="{{ route('login') }}" class="nav-button">Masuk</a>
                             @if (Route::has('register'))

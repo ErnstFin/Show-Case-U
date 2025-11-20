@@ -22,6 +22,8 @@ Route::get('/resume/{resume}/download', [App\Http\Controllers\ResumeController::
 Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/home/files/{fileEntry}', [HomeController::class, 'download'])->name('home.files.download');
+    Route::delete('/home/files/{fileEntry}', [HomeController::class, 'destroy'])->name('home.files.destroy');
+    Route::delete('/home/files', [HomeController::class, 'destroyAll'])->name('home.files.destroyAll');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
