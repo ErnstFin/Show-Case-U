@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* General helper to prevent Alpine-powered components flashing */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Dropdown panels stay hidden until Alpine toggles them */
+.dropdown-panel {
+    display: none;
+}
+
+/* Modal wrapper defaults to hidden to avoid layout shifts */
+.modal-wrapper {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .modal-wrapper {
+        padding: 1rem;
+    }
+}
