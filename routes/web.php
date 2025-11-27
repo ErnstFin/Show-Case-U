@@ -14,7 +14,9 @@ Route::get('/builder', function () {
     return view('builder');
 })->name('builder');
 
-Route::post('/resume/download', [App\Http\Controllers\ResumeController::class, 'downloadFromData'])->name('resume.download');
+// PERBAIKAN: Mengubah nama rute menjadi 'resume.download-data'
+Route::post('/resume/download', [App\Http\Controllers\ResumeController::class, 'downloadFromData'])->name('resume.download-data'); 
+
 Route::post('/resume', [App\Http\Controllers\ResumeController::class, 'store'])->name('resume.store');
 Route::put('/resume/{resume}', [App\Http\Controllers\ResumeController::class, 'update'])->name('resume.update');
 Route::get('/resume/{resume}/download', [App\Http\Controllers\ResumeController::class, 'download'])->name('resume.download.id');

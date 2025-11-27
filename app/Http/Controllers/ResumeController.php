@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveResumeRequest; // BARU: Import SaveResumeRequest
 use App\Models\FileEntry;
 use App\Models\Resume;
 use Dompdf\Dompdf;
@@ -13,26 +14,11 @@ use Illuminate\Support\Str;
 
 class ResumeController extends Controller
 {
-    public function store(Request $request)
+    // PERBAIKAN: Menggunakan SaveResumeRequest untuk validasi
+    public function store(SaveResumeRequest $request) 
     {
-        $validated = $request->validate([
-            'job_title' => 'nullable|string|max:255',
-            'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'city_state' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
-            'photo' => 'nullable|string',
-            'summary' => 'nullable|string',
-            'employment_history' => 'nullable|array',
-            'education' => 'nullable|array',
-            'skills' => 'nullable|array',
-            'languages' => 'nullable|array',
-            'certifications' => 'nullable|array',
-            'additional_sections' => 'nullable|array',
-        ]);
+        // Validasi dan data yang divalidasi diambil otomatis
+        $validated = $request->validated();
 
         $resume = Resume::create([
             'user_id' => auth()->id(),
@@ -46,26 +32,11 @@ class ResumeController extends Controller
         ]);
     }
 
-    public function update(Request $request, Resume $resume)
+    // PERBAIKAN: Menggunakan SaveResumeRequest untuk validasi
+    public function update(SaveResumeRequest $request, Resume $resume)
     {
-        $validated = $request->validate([
-            'job_title' => 'nullable|string|max:255',
-            'first_name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
-            'city_state' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
-            'photo' => 'nullable|string',
-            'summary' => 'nullable|string',
-            'employment_history' => 'nullable|array',
-            'education' => 'nullable|array',
-            'skills' => 'nullable|array',
-            'languages' => 'nullable|array',
-            'certifications' => 'nullable|array',
-            'additional_sections' => 'nullable|array',
-        ]);
+        // Validasi dan data yang divalidasi diambil otomatis
+        $validated = $request->validated();
 
         $resume->update($validated);
 
@@ -78,6 +49,7 @@ class ResumeController extends Controller
 
     public function download(Resume $resume)
     {
+        // Tidak ada perubahan besar pada metode ini.
         $html = View::make('resume.pdf', ['resume' => $resume])->render();
 
         $options = new Options();
@@ -99,13 +71,14 @@ class ResumeController extends Controller
         ]);
     }
 
+    // Perbaikan kecil: Memperketat validasi 'email' agar WAJIB
     public function downloadFromData(Request $request)
     {
         $validated = $request->validate([
             'job_title' => 'nullable|string|max:255',
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255', // PERBAIKAN: 'email' wajib
             'phone' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'city_state' => 'nullable|string|max:255',

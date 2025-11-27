@@ -361,7 +361,10 @@
                     this.updateScore();
                 },
                 updateSkills() {
-                    this.formData.skills = this.skillsInput.split(',').map(s => s.trim()).filter(s => s);
+                    this.formData.skills = (this.skillsInput || '') 
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(s => s.length > 0); // Pastikan string hasil split tidak kosong
                     this.updateScore();
                 },
                 getFullName() {
@@ -371,7 +374,7 @@
                 async downloadCV() {
                     try {
                         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                        const response = await fetch('{{ route("resume.download") }}', {
+                        const response = await fetch('{{ route("resume.download-data") }}', { 
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -384,15 +387,40 @@
                         if (response.ok) {
                             const blob = await response.blob();
                             const url = window.URL.createObjectURL(blob);
+                            const filenameHeader = response.headers.get('Content-Disposition');
+                            let filename = (this.getFullName() || 'resume') + '_CV.pdf';
+                            
+                            // Logika yang lebih baik untuk mendapatkan nama file dari header respons
+                            if (filenameHeader && filenameHeader.indexOf('filename=') !== -1) {
+                                // Ekstraksi nama file dan pembersihan
+                                filename = filenameHeader.split('filename=')[1].replace(/"/g, '').replace(/_/g, ' ').trim();
+                                if(filename.toLowerCase().endsWith('.pdf')) {
+                                    filename = filename.substring(0, filename.length - 4) + '.pdf';
+                                }
+                                filename = filename.replace(/\s/g, '_'); // Ganti spasi kembali menjadi underscore untuk download
+                            }
+                            
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = (this.getFullName() || 'resume') + '_CV.pdf';
+                            a.download = filename;
                             document.body.appendChild(a);
                             a.click();
                             window.URL.revokeObjectURL(url);
                             document.body.removeChild(a);
                         } else {
-                            alert('Error downloading CV. Please try again.');
+                            // PERBAIKAN: Menambahkan penanganan error yang lebih informatif (jika ada error validasi)
+                            const errorText = await response.text();
+                            let message = 'Error downloading CV. Please try again.';
+                            try {
+                                const errorJson = JSON.parse(errorText);
+                                if (errorJson.message) {
+                                    message = 'Validation Error: ' + errorJson.message;
+                                    // Anda dapat menambahkan logika untuk menampilkan error spesifik per kolom di sini
+                                }
+                            } catch (e) {
+                                // Abaikan error parse jika bukan format JSON
+                            }
+                            alert(message);
                         }
                     } catch (error) {
                         console.error('Error:', error);

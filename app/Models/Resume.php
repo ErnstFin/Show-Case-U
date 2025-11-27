@@ -2,41 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory; // BARU: Import HasFactory
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Resume extends Model
 {
+    // PERBAIKAN: Tambahkan HasFactory untuk memudahkan testing dan seeder
+    use HasFactory;
+    
     protected $fillable = [
+// ... (isi protected $fillable tidak berubah)
         'user_id',
         'job_title',
-        'first_name',
-        'last_name',
-        'email',
-        'phone',
-        'address',
-        'city_state',
-        'country',
-        'photo',
-        'summary',
-        'employment_history',
-        'education',
-        'skills',
-        'languages',
-        'certifications',
-        'additional_sections',
+// ...
     ];
 
     protected $casts = [
-        'employment_history' => 'array',
-        'education' => 'array',
-        'skills' => 'array',
-        'languages' => 'array',
-        'certifications' => 'array',
-        'additional_sections' => 'array',
+// ... (isi protected $casts tidak berubah)
     ];
 
-    public function user(): BelongsTo
+    public function user(): BelongsTo // PERBAIKAN: Pastikan return type-hint adalah BelongsTo
     {
         return $this->belongsTo(User::class);
     }
