@@ -1,0 +1,110 @@
+/* PDF Data Styles - Extracted from resume/pdf-data.blade.php */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #333;
+    padding: 40px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #2563eb;
+}
+
+.header h1 {
+    font-size: 24pt;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #1e293b;
+}
+
+.header .job-title {
+    font-size: 14pt;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.header .contact {
+    font-size: 10pt;
+    color: #64748b;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.summary {
+    text-align: justify;
+    margin-bottom: 20px;
+}
+
+.employment-item, .education-item {
+    margin-bottom: 20px;
+}
+
+.employment-item h3, .education-item h3 {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 5px;
+}
+
+.employment-item .company, .education-item .school {
+    font-size: 11pt;
+    color: #64748b;
+    margin-bottom: 5px;
+}
+
+.employment-item .period, .education-item .period {
+    font-size: 10pt;
+    color: #64748b;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.employment-item .description {
+    font-size: 10pt;
+    text-align: justify;
+    margin-top: 8px;
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 10pt;
+}
+
+.languages {
+    margin-top: 10px;
+}
+
+.language-item {
+    margin-bottom: 5px;
+}
+
