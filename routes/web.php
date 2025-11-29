@@ -34,9 +34,15 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])
-        ->middleware('role:admin')
-        ->name('dashboard.admin');
+    Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard.admin');
+        Route::get('/verifikasi-portofolio', [AdminDashboardController::class, 'portfolios'])->name('portfolios');
+        Route::get('/data-pengguna', [AdminDashboardController::class, 'users'])->name('users');
+        Route::get('/akses-perusahaan', [AdminDashboardController::class, 'companies'])->name('companies');
+        Route::get('/pengaturan-sistem', [AdminDashboardController::class, 'settings'])->name('settings');
+        Route::get('/laporan-statistik', [AdminDashboardController::class, 'reports'])->name('reports');
+        Route::get('/konten-informasi', [AdminDashboardController::class, 'contents'])->name('contents');
+    });
 });
 
 require __DIR__.'/auth.php';
