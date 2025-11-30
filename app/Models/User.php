@@ -22,10 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        // --- KOLOM TAMBAHAN (Sesuai Desain) ---
         'avatar',
         'phone',
         'subscription_plan',
+        'google_id', // <--- TAMBAHKAN INI (JANGAN LUPA KOMA DI AKHIR)
     ];
 
     /**

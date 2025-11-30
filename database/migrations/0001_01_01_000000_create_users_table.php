@@ -15,9 +15,9 @@ return new class extends Migration
         $table->id();
         $table->string('name');
         $table->string('email')->unique();
-        $table->string('google_id')->nullable()->unique(); // <--- TAMBAHKAN INI
-        $table->timestamp('email_verified_at')->nullable();
-        $table->string('password')->nullable(); // Password jadi nullable karena login Google tidak butuh password
+        $table->string('google_id')->nullable()->unique();
+        $table->timestamp(column: 'email_verified_at')->nullable();
+        $table->string('password')->nullable();
         
         // --- TAMBAHAN DARI SINI ---
         $table->string('avatar')->nullable(); // Foto Profil
