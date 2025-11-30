@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CvController;
@@ -14,10 +15,15 @@ Route::get('/', function () {
 
 // --- 2. AUTH (Tamu) ---
 Route::middleware('guest')->group(function () {
+    // Rute Login Biasa (Tetap pakai AuthController)
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+
+    // Rute Login Google (Pakai SocialAuthController)
+    Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -48,8 +48,10 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center md:text-left">Masuk</h1>
 
             <button class="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 rounded-2xl shadow-sm hover:bg-gray-50 transition text-sm font-medium text-gray-600 mb-6">
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-                Masuk dengan Google
+                <a href="{{ route('auth.google') }}" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3 rounded-2xl shadow-sm hover:bg-gray-50 transition text-sm font-medium text-gray-600 mb-6">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+                    Masuk dengan Google
+                </a>
             </button>
 
             <div class="relative flex py-2 items-center mb-6">
