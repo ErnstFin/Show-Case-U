@@ -2,33 +2,36 @@
 
 namespace App\Models;
 
-// Pastikan import ini ada untuk fitur token API
-use Laravel\Sanctum\HasApiTokens; 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Portfolio;
 
 class User extends Authenticatable
 {
-    // Gunakan semua Trait yang dibutuhkan di SATU baris ini
-    use HasApiTokens, HasFactory, Notifiable; 
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
+        // --- KOLOM TAMBAHAN (Sesuai Desain) ---
+        'avatar',
+        'phone',
+        'subscription_plan',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -48,13 +51,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function fileEntries()
+    /**
+     * Relasi ke tabel Portfolios
+     * Satu user bisa punya banyak portofolio
+     */
+    public function portfolios()
     {
-        return $this->hasMany(FileEntry::class);
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
+        return $this->hasMany(Portfolio::class);
     }
 }

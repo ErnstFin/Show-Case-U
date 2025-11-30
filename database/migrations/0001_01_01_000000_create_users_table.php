@@ -10,6 +10,7 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
+<<<<<<< HEAD
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
@@ -20,6 +21,25 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+=======
+{
+    Schema::create('users', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('email')->unique();
+        $table->timestamp('email_verified_at')->nullable();
+        $table->string('password');
+        
+        // --- TAMBAHAN DARI SINI ---
+        $table->string('avatar')->nullable(); // Foto Profil
+        $table->string('phone')->nullable();  // No HP
+        $table->enum('subscription_plan', ['free', 'pro', 'business'])->default('free');
+        // --- SAMPAI SINI ---
+
+        $table->rememberToken();
+        $table->timestamps();
+    });
+>>>>>>> origin/Jojo
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

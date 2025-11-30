@@ -13,12 +13,21 @@ return [
     | incoming requests. Laravel supports a variety of storage options to
     | persist session data. Database storage is a great default choice.
     |
+<<<<<<< HEAD
     | Supported: "file", "cookie", "database", "apc",
     |            "memcached", "redis", "dynamodb", "array"
     |
     */
 
     'driver' => env('SESSION_DRIVER', 'file'),
+=======
+    | Supported: "file", "cookie", "database", "memcached",
+    |            "redis", "dynamodb", "array"
+    |
+    */
+
+    'driver' => env('SESSION_DRIVER', 'database'),
+>>>>>>> origin/Jojo
 
     /*
     |--------------------------------------------------------------------------
@@ -32,7 +41,11 @@ return [
     |
     */
 
+<<<<<<< HEAD
     'lifetime' => env('SESSION_LIFETIME', 120),
+=======
+    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+>>>>>>> origin/Jojo
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
@@ -97,7 +110,11 @@ return [
     | define the cache store which should be used to store the session data
     | between requests. This must match one of your defined cache stores.
     |
+<<<<<<< HEAD
     | Affects: "apc", "dynamodb", "memcached", "redis"
+=======
+    | Affects: "dynamodb", "memcached", "redis"
+>>>>>>> origin/Jojo
     |
     */
 
@@ -125,12 +142,19 @@ return [
     | the framework. Typically, you should not need to change this value
     | since doing so does not grant a meaningful security improvement.
     |
+<<<<<<< HEAD
     |
+=======
+>>>>>>> origin/Jojo
     */
 
     'cookie' => env(
         'SESSION_COOKIE',
+<<<<<<< HEAD
         Str::slug(env('APP_NAME', 'laravel'), '_').'_session'
+=======
+        Str::slug((string) env('APP_NAME', 'laravel')).'-session'
+>>>>>>> origin/Jojo
     ),
 
     /*

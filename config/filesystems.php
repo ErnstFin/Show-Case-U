@@ -24,7 +24,11 @@ return [
     | may even configure multiple disks for the same driver. Examples for
     | most supported storage drivers are configured here for reference.
     |
+<<<<<<< HEAD
     | Supported Drivers: "local", "ftp", "sftp", "s3"
+=======
+    | Supported drivers: "local", "ftp", "sftp", "s3"
+>>>>>>> origin/Jojo
     |
     */
 
@@ -32,8 +36,15 @@ return [
 
         'local' => [
             'driver' => 'local',
+<<<<<<< HEAD
             'root' => storage_path('app'),
             'throw' => false,
+=======
+            'root' => storage_path('app/private'),
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+>>>>>>> origin/Jojo
         ],
 
         'public' => [
@@ -42,6 +53,10 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
+<<<<<<< HEAD
+=======
+            'report' => false,
+>>>>>>> origin/Jojo
         ],
 
         's3' => [
@@ -54,6 +69,10 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+<<<<<<< HEAD
+=======
+            'report' => false,
+>>>>>>> origin/Jojo
         ],
 
     ],

@@ -3,12 +3,22 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+<<<<<<< HEAD
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+=======
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+>>>>>>> origin/Jojo
     /**
      * Seed the application's database.
      */
@@ -20,6 +30,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+<<<<<<< HEAD
 
         User::factory()->create([
             'name' => 'Administrator',
@@ -27,5 +38,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'password' => Hash::make('Admin!234'),
         ]);
+=======
+>>>>>>> origin/Jojo
     }
 }
