@@ -21,7 +21,7 @@ class SocialAuthController extends Controller
     {
         // 1. Ambil data user dari Google
         // Jika ada masalah konfigurasi (Client ID/Secret salah), error akan muncul di baris ini
-        $googleUser = Socialite::driver('google')->user();
+        $googleUser = Socialite::driver('google')->stateless()->user();
 
         // 2. Cari user di database berdasarkan google_id atau email
         $user = User::where('google_id', $googleUser->id)
