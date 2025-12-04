@@ -25,6 +25,8 @@ class CvController extends Controller
             'profession' => 'required|string',
             'email'     => 'required|email',
             'phone'     => 'required|string',
+            // BARU: Validasi template
+            'template' => 'required|in:template,ats_template', 
         ]);
 
         // Simpan Data
@@ -40,19 +42,25 @@ class CvController extends Controller
                 'skills'     => $request->skills,
                 'education'  => $request->education,
                 'experience' => $request->experience,
+                // BARU: Simpan Pilihan Template
+                'template'   => $request->template,
             ]
         );
 
-        return redirect()->back()->with('success', 'Data CV berhasil disimpan! Siap diunduh.');
+        return redirect()->back()->with('success', 'Data CV berhasil disimpan! Siap dipreview.');
     }
 
-    // 3. Download PDF
+    // 3. Download PDF (DIUBAH UNTUK MEMUAT TEMPLATE SESUAI PILIHAN)
     public function download()
     {
         $cv = \App\Models\Cv::where('user_id', \Illuminate\Support\Facades\Auth::id())->firstOrFail();
         
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('cv.template', compact('cv'));
+        // Tentukan view template yang akan digunakan
+        $templateView = 'cv.' . $cv->template; // Contoh: 'cv.template' atau 'cv.ats_template'
         
-        return $pdf->download('CV_' . $cv->full_name . '.pdf');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($templateView, compact('cv'));
+        
+        // Menggunakan stream untuk preview
+        return $pdf->stream('CV_' . $cv->full_name . '.pdf'); 
     }
 }

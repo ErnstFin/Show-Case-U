@@ -37,7 +37,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
             </svg>
-            Download PDF
+            Preview PDF
         </a>
         @endif
     </div>
@@ -50,42 +50,35 @@
         </div>
 
         <div class="p-8 md:p-10">
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-2xl mb-6 text-center font-medium">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <form action="{{ route('cv.store') }}" method="POST">
-                @csrf
-                
-                <h3 class="text-brand-blue font-bold uppercase tracking-wide text-sm mb-4 border-b border-gray-100 pb-2">Informasi Kontak</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div>
-                        <label class="label-text">Nama Lengkap</label>
-                        <input type="text" name="full_name" value="{{ old('full_name', $cv->full_name ?? Auth::user()->name) }}" class="input-field" placeholder="Nama Lengkap">
-                    </div>
-                    <div>
-                        <label class="label-text">Profesi / Posisi</label>
-                        <input type="text" name="profession" value="{{ old('profession', $cv->profession ?? '') }}" class="input-field" placeholder="Contoh: UI/UX Designer">
-                    </div>
-                    <div>
-                        <label class="label-text">Email</label>
-                        <input type="email" name="email" value="{{ old('email', $cv->email ?? Auth::user()->email) }}" class="input-field">
-                    </div>
-                    <div>
-                        <label class="label-text">No. Telepon</label>
-                        <input type="text" name="phone" value="{{ old('phone', $cv->phone ?? '') }}" class="input-field" placeholder="0812...">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="label-text">Alamat Domisili</label>
-                        <input type="text" name="address" value="{{ old('address', $cv->address ?? '') }}" class="input-field" placeholder="Kota, Negara">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="label-text">Tentang Saya (Summary)</label>
-                        <textarea name="summary" rows="3" class="input-field" placeholder="Deskripsikan diri kamu secara singkat...">{{ old('summary', $cv->summary ?? '') }}</textarea>
-                    </div>
-                </div>
+        {{-- Notifikasi Sukses --}}
+        @if(session('success'))
+        <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-2xl mb-6 text-center font-medium">
+            {{ session('success') }}
+        </div>
+        @endif
+    
+        {{-- BARU: Pilihan Template --}}
+        <h3 class="text-brand-blue font-bold uppercase tracking-wide text-sm mb-4 border-b border-gray-100 pb-2">Pilihan Template</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+            <label class="label-text">Pilih Desain CV</label>
+            {{-- Mengambil template yang sudah ada, defaultnya 'template' --}}
+            @php $currentTemplate = old('template', $cv->template ?? 'template'); @endphp
+            <select name="template" class="input-field">
+                <option value="template" {{ $currentTemplate == 'template' ? 'selected' : '' }}>Template Modern (Visual)</option>
+                <option value="ats_template" {{ $currentTemplate == 'ats_template' ? 'selected' : '' }}>Template ATS Friendly (Sederhana)</option>
+            </select>
+            @error('template')
+                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+        {{-- Di sini bisa ditambahkan preview gambar template --}}
+        <div class="hidden md:block">
+             <p class="text-[10px] text-gray-400 mb-1 mt-6">Preview Template akan ditambahkan di sini.</p>
+        </div>
+    </div>
+    
+    <form action="{{ route('cv.store') }}" method="POST">
 
                 <h3 class="text-brand-blue font-bold uppercase tracking-wide text-sm mb-4 border-b border-gray-100 pb-2">Kualifikasi</h3>
                 <div class="space-y-6">
