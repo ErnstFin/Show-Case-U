@@ -3,57 +3,73 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// Tidak perlu 'use App\Models\Cv' karena kita panggil langsung di bawah.
+use App\Models\Cv; // Import Model CV
+use App\Models\WorkExperience; // Import Model WorkExperience
+use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CvController extends Controller
 {
-    // 1. Tampilkan Form Buat CV (Diubah untuk menangani pilihan template)
+    // 1. Tampilkan Form Buat CV
     public function create($template = null)
     {
-        // Ambil data CV yang sudah ada
-        $cv = \App\Models\Cv::where('user_id', \Illuminate\Support\Facades\Auth::id())->first();
+        // Ambil data CV user beserta relasi workExperiences (jika ada)
+        $cv = Cv::with('workExperiences')->where('user_id', Auth::id())->first();
 
-        // Jika template dipilih dari URL, gunakan itu. 
-        // Jika tidak, gunakan template yang tersimpan di DB, atau default 'template'.
+        // Logika pemilihan template
         $selectedTemplate = $template ?: ($cv->template ?? 'template');
 
-        // Panggil view createCV
+        // Kirim data ke view
         return view('cv.createCV', compact('cv', 'selectedTemplate'));
     }
 
-    // 2. Simpan Data CV (Perbaiki Validasi dan Tambahkan Template)
+    // 2. Simpan Data CV (Store)
     public function store(Request $request)
     {
-        // Pastikan semua field wajib (required) divalidasi
+        // A. VALIDASI DATA
+        // Kita sesuaikan validasi dengan kolom database yang baru
         $validated = $request->validate([
-            'full_name'  => 'required|string',
-            'profession' => 'required|string',
+            // Data Diri
+            'full_name'  => 'required|string|max:255',
+            'profession' => 'required|string|max:255',
             'email'      => 'required|email',
             'phone'      => 'required|string',
             'address'    => 'required|string',
             'summary'    => 'required|string',
             'skills'     => 'required|string',
-            'education'  => 'required|string',
-            'experience' => 'required|string',
-            'template'   => 'required|in:template,ats_template',
+            
+            // Pendidikan (Kolom Baru)
+            'university' => 'required|string',
+            'major'      => 'required|string',
+            'gpa'        => 'nullable|string',
+            
+            // Template & Foto
+            'template'   => 'required|string',
             'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // Max 5MB
+
+            // Pengalaman Kerja (Validasi Array)
+            'work_experiences' => 'nullable|array',
+            'work_experiences.*.company' => 'required_with:work_experiences|string',
+            'work_experiences.*.position' => 'required_with:work_experiences|string',
+            'work_experiences.*.start_date' => 'required_with:work_experiences|date',
         ]);
 
-        // Handle photo upload
+        // B. HANDLE UPLOAD FOTO
         $photoPath = null;
+        
+        // Cek apakah user sudah punya CV sebelumnya (untuk ambil foto lama jika tidak upload baru)
+        $existingCv = Cv::where('user_id', Auth::id())->first();
+        
         if ($request->hasFile('photo')) {
             $photoPath = $request->file('photo')->store('cv_photos', 'public');
+        } elseif ($existingCv) {
+            $photoPath = $existingCv->photo_path;
         }
 
-        // Get existing CV to preserve photo if not updated
-        $cv = \App\Models\Cv::where('user_id', \Illuminate\Support\Facades\Auth::id())->first();
-        if ($cv && !$request->hasFile('photo')) {
-            $photoPath = $cv->photo_path; // Keep existing photo
-        }
-
-        // Simpan Data
-        \App\Models\Cv::updateOrCreate(
-            ['user_id' => \Illuminate\Support\Facades\Auth::id()],
+        // C. SIMPAN DATA CV UTAMA (UpdateOrCreate)
+        // Ini akan membuat CV baru ATAU mengupdate jika user sudah punya CV
+        $cv = Cv::updateOrCreate(
+            ['user_id' => Auth::id()], // Kondisi pencarian
             [
                 'full_name'  => $validated['full_name'],
                 'profession' => $validated['profession'],
@@ -62,38 +78,73 @@ class CvController extends Controller
                 'address'    => $validated['address'],
                 'summary'    => $validated['summary'],
                 'skills'     => $validated['skills'],
-                'education'  => $validated['education'],
-                'experience' => $validated['experience'],
+                
+                // Simpan data pendidikan ke kolom baru
+                'university' => $validated['university'],
+                'major'      => $validated['major'],
+                'gpa'        => $validated['gpa'],
+
+                // Field lama kita kosongkan atau isi string kosong jika database mewajibkan
+                'education'  => $validated['university'] . ' - ' . $validated['major'], 
+                'experience' => 'Lihat detail pengalaman', // Dummy text karena data asli ada di tabel lain
+
                 'template'   => $validated['template'],
                 'photo_path' => $photoPath,
             ]
         );
 
-        return redirect()->back()->with('success', 'Data CV berhasil disimpan! Siap dipreview.');
+        // D. SIMPAN PENGALAMAN KERJA (RELASI)
+        // Strategi: Hapus semua pengalaman lama milik CV ini, lalu buat ulang dari inputan baru.
+        // Ini cara paling aman untuk menangani edit/hapus item list tanpa logika rumit.
+        if ($existingCv) {
+            $cv->workExperiences()->delete();
+        }
+
+        if ($request->has('work_experiences')) {
+            foreach ($request->work_experiences as $experience) {
+                // Pastikan data tidak kosong sebelum create
+                if (!empty($experience['company'])) {
+                    WorkExperience::create([
+                        'cv_id'       => $cv->id,
+                        'company'     => $experience['company'],
+                        'position'    => $experience['position'],
+                        'start_date'  => $experience['start_date'],
+                        'end_date'    => $experience['end_date'] ?? null,
+                        'is_current'  => isset($experience['is_current']) ? 1 : 0,
+                        'description' => $experience['description'] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('dashboard')->with('success', 'CV berhasil disimpan!');
     }
 
-    // 3. Download/Preview PDF (Menggunakan Stream)
+    // 3. Download/Preview PDF
     public function download()
     {
-        // Pastikan CV ada sebelum mencoba mengunduh
-        $cv = \App\Models\Cv::where('user_id', \Illuminate\Support\Facades\Auth::id())->firstOrFail();
+        // Load CV beserta pengalaman kerjanya
+        $cv = Cv::with('workExperiences')->where('user_id', Auth::id())->firstOrFail();
         
-        // Tentukan view template yang akan digunakan
+        // Tentukan view template
         $templateView = 'cv.' . $cv->template; 
         
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($templateView, compact('cv'));
+        // Cek apakah view template ada, jika tidak pakai default
+        if (!view()->exists($templateView)) {
+            $templateView = 'cv.template';
+        }
+
+        $pdf = Pdf::loadView($templateView, compact('cv'));
         
-        // Menggunakan stream untuk preview
         return $pdf->stream('CV_' . $cv->full_name . '.pdf'); 
     }
 
     // 4. Edit CV
     public function edit($id)
     {
-        $cv = \App\Models\Cv::findOrFail($id);
+        $cv = Cv::with('workExperiences')->findOrFail($id);
         
-        // Pastikan user hanya bisa edit CV miliknya sendiri
-        if ($cv->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+        if ($cv->user_id !== Auth::id()) {
             return abort(403, 'Unauthorized');
         }
 
@@ -101,54 +152,24 @@ class CvController extends Controller
         return view('cv.edit-cv', compact('cv', 'selectedTemplate'));
     }
 
-    // 5. Update CV
+    // 5. Update CV (Sebenarnya sudah terhandle di fungsi store pakai updateOrCreate, 
+    // tapi jika route update mengarah kesini, kita samakan logikanya)
     public function update($id, Request $request)
     {
-        $cv = \App\Models\Cv::findOrFail($id);
-        
-        // Pastikan user hanya bisa update CV miliknya sendiri
-        if ($cv->user_id !== \Illuminate\Support\Facades\Auth::id()) {
-            return abort(403, 'Unauthorized');
-        }
-
-        // Validasi data
-        $validated = $request->validate([
-            'full_name'  => 'required|string',
-            'profession' => 'required|string',
-            'email'      => 'required|email',
-            'phone'      => 'required|string',
-            'address'    => 'required|string',
-            'summary'    => 'required|string',
-            'skills'     => 'required|string',
-            'education'  => 'required|string',
-            'experience' => 'required|string',
-            'template'   => 'required|in:template,ats_template',
-            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-        ]);
-
-        // Handle photo upload
-        $photoPath = $cv->photo_path; // Keep existing photo
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('cv_photos', 'public');
-        }
-
-        // Update data
-        $cv->update(array_merge($validated, ['photo_path' => $photoPath]));
-
-        return redirect()->route('dashboard')->with('success', 'CV berhasil diperbarui!');
+        // Kita alihkan ke fungsi store saja agar logikanya satu pintu
+        return $this->store($request);
     }
 
     // 6. Delete CV
     public function destroy($id)
     {
-        $cv = \App\Models\Cv::findOrFail($id);
+        $cv = Cv::findOrFail($id);
         
-        // Pastikan user hanya bisa delete CV miliknya sendiri
-        if ($cv->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+        if ($cv->user_id !== Auth::id()) {
             return abort(403, 'Unauthorized');
         }
 
-        $cv->delete();
+        $cv->delete(); // Karena pakai cascade on delete di migrasi, work_experiences juga ikut terhapus otomatis
 
         return redirect()->route('dashboard')->with('success', 'CV berhasil dihapus!');
     }

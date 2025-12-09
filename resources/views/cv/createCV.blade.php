@@ -21,25 +21,60 @@
     </script>
     <style> 
         body { font-family: 'Poppins', sans-serif; }
+        
+        /* KITA PAKAI CSS BIASA SUPAYA PASTI JALAN */
         .input-field { 
-            @apply w-full px-0 py-2 border-b border-gray-300 rounded-none focus:outline-none focus:border-brand-pink transition text-sm bg-white;
-            color: #4A5568;
+            width: 100%;
+            padding: 10px 15px; /* Jarak teks di dalam kotak */
+            border: 1px solid #cbd5e0; /* Garis pinggir abu-abu JELAS */
+            border-radius: 8px; /* Sudut melengkung */
+            background-color: #f8fafc; /* Warna latar agak abu muda */
+            font-size: 14px;
+            color: #2d3748;
+            margin-top: 4px;
+            transition: all 0.3s ease;
         }
+        
+        /* Saat diklik jadi Putih bersih & Pinggir Pink */
         .input-field:focus {
-            background-color: white;
-            border-bottom-width: 2px;
+            outline: none;
+            background-color: #ffffff;
+            border-color: #FFB5B6; 
+            box-shadow: 0 0 0 3px rgba(255, 181, 182, 0.2); /* Efek glowing tipis */
         }
+        
         .input-field::placeholder {
-            color: #CBD5E0;
+            color: #a0aec0;
         }
+
         .label-text { 
-            @apply block font-normal text-gray-600 text-xs mb-2 uppercase tracking-wide;
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
+
         .drop-zone {
-            @apply border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer transition;
+            border: 2px dashed #cbd5e0;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f8fafc;
+            transition: background-color 0.3s;
         }
+        
+        .drop-zone:hover {
+            background-color: #ffffff;
+            border-color: #FFB5B6;
+        }
+
         .drop-zone.dragover {
-            @apply border-brand-pink bg-brand-peach bg-opacity-20;
+            border-color: #FFB5B6;
+            background-color: #fff5f5;
         }
     </style>
 </head>
@@ -61,17 +96,11 @@
                 <span class="text-xs text-brand-blue font-semibold bg-brand-sky px-3 py-1 rounded-full">Template: {{ ucfirst(str_replace('_', ' ', $selectedTemplate)) }}</span>
                 @if($selectedTemplate === 'template')
                 <button @click="showCustomize = !showCustomize" class="bg-brand-peach text-gray-700 px-4 py-2 rounded-full font-bold text-sm hover:bg-orange-200 transition flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m6 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 2a2 2 0 100 4m0-4a2 2 0 110 4M7 20h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
                     Customize
                 </button>
                 @endif
                 @if($cv)
                 <a href="{{ route('cv.download') }}" target="_blank" class="bg-brand-pink text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-red-300 transition flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
                     Download PDF
                 </a>
                 @endif
@@ -88,62 +117,33 @@
         </div>
         @endif
 
+        @if($errors->any())
+        <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl mb-6">
+            <ul class="list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         {{-- CUSTOMIZE PANEL (MODAL) --}}
-        <div x-show="showCustomize" x-transition class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click="showCustomize = false">
+        <div x-show="showCustomize" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click="showCustomize = false" style="display: none;">
             <div class="bg-white rounded-2xl max-w-md w-full p-8" @click.stop>
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Customize Template</h3>
-                    <button @click="showCustomize = false" class="text-gray-400 hover:text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    <h3 class="text-xl font-bold text-gray-800">Customize Colors</h3>
+                    <button @click="showCustomize = false" class="text-gray-400 hover:text-gray-600">✕</button>
                 </div>
-
                 <div class="space-y-4">
                     <div>
                         <label class="label-text">Header Color</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="color" x-model="headerColor" class="w-12 h-10 rounded cursor-pointer border border-gray-300">
-                            <input type="text" x-model="headerColor" class="input-field flex-1 text-xs" placeholder="#FFB5B6">
-                        </div>
+                        <div class="flex gap-2 items-center"><input type="color" x-model="headerColor" class="w-12 h-10 rounded"><input type="text" x-model="headerColor" class="input-field"></div>
                     </div>
-
-                    <div>
-                        <label class="label-text">Header Text Color</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="color" x-model="headerTextColor" class="w-12 h-10 rounded cursor-pointer border border-gray-300">
-                            <input type="text" x-model="headerTextColor" class="input-field flex-1 text-xs" placeholder="#FFFFFF">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="label-text">Accent Color</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="color" x-model="accentColor" class="w-12 h-10 rounded cursor-pointer border border-gray-300">
-                            <input type="text" x-model="accentColor" class="input-field flex-1 text-xs" placeholder="#FFE5D9">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="label-text">Section Border Color</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="color" x-model="sectionBorderColor" class="w-12 h-10 rounded cursor-pointer border border-gray-300">
-                            <input type="text" x-model="sectionBorderColor" class="input-field flex-1 text-xs" placeholder="#FFB5B6">
-                        </div>
-                    </div>
-
                     <div>
                         <label class="label-text">Text Color</label>
-                        <div class="flex gap-2 items-center">
-                            <input type="color" x-model="textColor" class="w-12 h-10 rounded cursor-pointer border border-gray-300">
-                            <input type="text" x-model="textColor" class="input-field flex-1 text-xs" placeholder="#2c3e50">
-                        </div>
+                        <div class="flex gap-2 items-center"><input type="color" x-model="textColor" class="w-12 h-10 rounded"><input type="text" x-model="textColor" class="input-field"></div>
                     </div>
-
-                    <button @click="showCustomize = false" class="w-full bg-brand-pink text-white font-bold py-2 rounded-lg hover:bg-red-300 transition mt-6">
-                        Done
-                    </button>
+                    <button @click="showCustomize = false" class="w-full bg-brand-pink text-white font-bold py-2 rounded-lg mt-6">Done</button>
                 </div>
             </div>
         </div>
@@ -152,123 +152,109 @@
             
             {{-- LEFT SIDE: FORM INPUT --}}
             <div class="bg-white rounded-[30px] shadow-lg p-8 overflow-y-auto">
-                <h2 class="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <span class="bg-brand-peach p-2 rounded-lg">📝</span>
-                    Lengkapi Data Diri
-                </h2>
-
-                <form action="{{ route('cv.store') }}" method="POST" enctype="multipart/form-data" @submit="onFormSubmit($event)">
+                <form action="{{ route('cv.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="template" value="{{ $selectedTemplate ?? 'template' }}">
 
-                    {{-- SECTION: FOTO PROFIL --}}
+                    {{-- 1. FOTO PROFIL --}}
                     <div class="mb-8">
                         <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">📸 Foto Profil</h3>
-                        
-                        <div class="mb-4">
-                            <label class="label-text">Tambahkan Foto (Opsional)</label>
-                            <p class="text-[10px] text-gray-400 mb-3">Format: PNG, JPEG, JPG, GIF | Max 5MB</p>
-                            
-                            {{-- Photo Preview --}}
-                            <div x-show="!photoPreview && !$el.querySelector('input[name=photo]').value" class="mb-4">
-                                <div class="w-20 h-20 rounded-full bg-brand-peach flex items-center justify-center text-3xl font-bold text-brand-pink">
-                                    <span x-text="(fullName || 'A').charAt(0).toUpperCase()"></span>
-                                </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-20 h-20 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex-shrink-0">
+                                <template x-if="photoPreview">
+                                    <img :src="photoPreview" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="!photoPreview">
+                                    <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Photo</div>
+                                </template>
                             </div>
-                            <div x-show="photoPreview" class="mb-4">
-                                <img :src="photoPreview" alt="Preview" class="w-20 h-20 rounded-full object-cover border-4 border-brand-pink">
-                                <button type="button" @click="removePhoto()" class="text-xs text-red-500 hover:text-red-700 mt-2 font-bold">
-                                    ✕ Hapus Foto
-                                </button>
-                            </div>
-
-                            {{-- Drag & Drop Zone --}}
-                            <div class="drop-zone" @dragover="dragover = true" @dragleave="dragover = false" @drop="handleDrop($event)" :class="dragover ? 'dragover' : ''">
-                                <div class="flex flex-col items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    <p class="text-sm text-gray-600 font-semibold">Drag & Drop foto di sini</p>
-                                    <p class="text-xs text-gray-400">atau</p>
-                                </div>
-                                <input type="file" name="photo" accept="image/*" class="hidden" @change="handlePhotoSelect($event)" x-ref="photoInput">
-                                <button type="button" @click="$refs.photoInput.click()" class="text-xs text-brand-pink font-bold hover:underline mt-2">
-                                    Pilih dari Komputer
-                                </button>
+                            <div class="flex-1">
+                                <input type="file" name="photo" @change="handlePhotoSelect($event)" class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:bg-brand-sky file:text-brand-blue hover:file:bg-brand-peach">
                             </div>
                         </div>
                     </div>
 
-                    {{-- SECTION 1: INFORMASI KONTAK --}}
+                    {{-- 2. DATA PRIBADI --}}
+                    <div class="mb-8 space-y-4">
+                        <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">Data Diri</h3>
+                        <div><label class="label-text">Nama Lengkap</label><input type="text" name="full_name" x-model="fullName" class="input-field" required></div>
+                        <div><label class="label-text">Profesi</label><input type="text" name="profession" x-model="profession" class="input-field" required></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="label-text">Email</label><input type="email" name="email" x-model="email" class="input-field" required></div>
+                            <div><label class="label-text">Telepon</label><input type="text" name="phone" x-model="phone" class="input-field" required></div>
+                        </div>
+                        <div><label class="label-text">Alamat</label><input type="text" name="address" x-model="address" class="input-field" required></div>
+                        <div><label class="label-text">Tentang Saya (Summary)</label><textarea name="summary" rows="3" x-model="summary" class="input-field" required></textarea></div>
+                    </div>
+
+                    {{-- 3. PENDIDIKAN (BARU: SESUAI DATABASE) --}}
+                    <div class="mb-8 space-y-4">
+                        <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">🎓 Pendidikan Terakhir</h3>
+                        <div>
+                            <label class="label-text">Nama Universitas / Sekolah</label>
+                            <input type="text" name="university" x-model="university" class="input-field" placeholder="Contoh: Universitas Indonesia" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="label-text">Jurusan</label>
+                                <input type="text" name="major" x-model="major" class="input-field" placeholder="Informatika" required>
+                            </div>
+                            <div>
+                                <label class="label-text">IPK (GPA)</label>
+                                <input type="text" name="gpa" x-model="gpa" class="input-field" placeholder="3.85">
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 4. PENGALAMAN KERJA (BARU: DINAMIS & LOOP) --}}
                     <div class="mb-8">
-                        <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">Informasi Kontak</h3>
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+                            <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest">💼 Pengalaman Kerja</h3>
+                            <button type="button" @click="addExperience()" class="text-xs bg-brand-sky text-brand-blue px-3 py-1 rounded hover:bg-brand-peach hover:text-white transition">+ Tambah</button>
+                        </div>
                         
-                        <div class="space-y-4">
-                            <div>
-                                <label class="label-text">Nama Lengkap</label>
-                                <input type="text" name="full_name" value="{{ old('full_name', $cv->full_name ?? auth()->user()?->name ?? '') }}" class="input-field" placeholder="John Doe" @input="updatePreview" required>
-                                @error('full_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label class="label-text">Profesi</label>
-                                <input type="text" name="profession" value="{{ old('profession', $cv->profession ?? '') }}" class="input-field" placeholder="Software Engineer" @input="updatePreview" required>
-                                @error('profession') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">Email</label>
-                                <input type="email" name="email" value="{{ old('email', $cv->email ?? auth()->user()?->email ?? '') }}" class="input-field" @input="updatePreview" required>
-                                @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">Telepon</label>
-                                <input type="text" name="phone" value="{{ old('phone', $cv->phone ?? '') }}" class="input-field" placeholder="0812..." @input="updatePreview" required>
-                                @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div>
-                                <label class="label-text">Kota/Negara</label>
-                                <input type="text" name="address" value="{{ old('address', $cv->address ?? '') }}" class="input-field" placeholder="Jakarta, Indonesia" @input="updatePreview" required>
-                                @error('address') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">Tentang Saya</label>
-                                <textarea name="summary" rows="3" class="input-field" placeholder="Deskripsikan diri kamu..." @input="updatePreview" required>{{ old('summary', $cv->summary ?? '') }}</textarea>
-                                @error('summary') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
+                        <div class="space-y-6">
+                            <template x-for="(exp, index) in experiences" :key="index">
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 relative">
+                                    <button type="button" @click="removeExperience(index)" class="absolute top-2 right-2 text-red-400 hover:text-red-600 font-bold">✕</button>
+                                    
+                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                        <div>
+                                            <label class="label-text">Perusahaan</label>
+                                            <input type="text" :name="`work_experiences[${index}][company]`" x-model="exp.company" class="input-field bg-transparent" placeholder="Nama PT" required>
+                                        </div>
+                                        <div>
+                                            <label class="label-text">Posisi</label>
+                                            <input type="text" :name="`work_experiences[${index}][position]`" x-model="exp.position" class="input-field bg-transparent" placeholder="Jabatan" required>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3 mb-3">
+                                        <div>
+                                            <label class="label-text">Mulai</label>
+                                            <input type="date" :name="`work_experiences[${index}][start_date]`" x-model="exp.start_date" class="input-field bg-transparent" required>
+                                        </div>
+                                        <div>
+                                            <label class="label-text">Selesai</label>
+                                            <input type="date" :name="`work_experiences[${index}][end_date]`" x-model="exp.end_date" class="input-field bg-transparent">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="label-text">Deskripsi</label>
+                                        <textarea :name="`work_experiences[${index}][description]`" x-model="exp.description" rows="2" class="input-field bg-transparent" placeholder="Apa yang kamu kerjakan?"></textarea>
+                                    </div>
+                                </div>
+                            </template>
+                            <div x-show="experiences.length === 0" class="text-center text-gray-400 text-xs py-4 italic">Belum ada pengalaman kerja.</div>
                         </div>
                     </div>
 
-                    {{-- SECTION 2: KUALIFIKASI --}}
+                    {{-- 5. SKILLS --}}
                     <div class="mb-8">
-                        <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">Kualifikasi</h3>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <label class="label-text">Keahlian (Skills)</label>
-                                <p class="text-[10px] text-gray-400 mb-1">Pisahkan dengan koma</p>
-                                <textarea name="skills" rows="2" class="input-field" @input="updatePreview" required>{{ old('skills', $cv->skills ?? '') }}</textarea>
-                                @error('skills') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">Riwayat Pendidikan</label>
-                                <p class="text-[10px] text-gray-400 mb-1">Pisahkan setiap pendidikan dengan baris kosong</p>
-                                <textarea name="education" rows="4" class="input-field" @input="updatePreview" required>{{ old('education', $cv->education ?? '') }}</textarea>
-                                @error('education') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div>
-                                <label class="label-text">Pengalaman Kerja</label>
-                                <p class="text-[10px] text-gray-400 mb-1">Pisahkan setiap pengalaman dengan baris kosong</p>
-                                <textarea name="experience" rows="5" class="input-field" @input="updatePreview" required>{{ old('experience', $cv->experience ?? '') }}</textarea>
-                                @error('experience') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
+                        <h3 class="text-brand-blue font-bold uppercase text-xs tracking-widest mb-4 border-b border-gray-100 pb-2">🛠 Keahlian</h3>
+                        <label class="label-text">Daftar Keahlian (Pisahkan dengan koma)</label>
+                        <textarea name="skills" rows="3" x-model="skills" class="input-field" required></textarea>
                     </div>
 
-                    {{-- SUBMIT BUTTON --}}
                     <button type="submit" class="w-full bg-brand-pink text-white font-bold py-3 rounded-2xl hover:bg-red-300 transition shadow-lg shadow-pink-200">
                         💾 Simpan Data CV
                     </button>
@@ -278,63 +264,107 @@
             {{-- RIGHT SIDE: LIVE PREVIEW --}}
             <div class="bg-white rounded-[30px] shadow-lg p-6 flex flex-col">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="font-bold text-gray-800 flex items-center gap-2">
-                        <span class="bg-brand-sky p-2 rounded-lg">👁️</span>
-                        Live Preview
-                    </h2>
-                    <div class="flex gap-1">
-                        <button @click="zoomLevel = 75" :class="zoomLevel === 75 ? 'bg-brand-pink text-white' : 'bg-gray-200'" class="px-2 py-1 rounded text-xs font-bold transition">75%</button>
-                        <button @click="zoomLevel = 100" :class="zoomLevel === 100 ? 'bg-brand-pink text-white' : 'bg-gray-200'" class="px-2 py-1 rounded text-xs font-bold transition">100%</button>
-                    </div>
+                    <h2 class="font-bold text-gray-800 flex items-center gap-2"><span class="bg-brand-sky p-2 rounded-lg">👁️</span> Live Preview</h2>
                 </div>
 
-                <div class="flex-1 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center" style="overflow-y: auto;">
-                    <div :style="`transform: scale(${zoomLevel / 100}); transform-origin: top center;`" class="bg-white" style="width: 8.5in; min-height: 11in;">
-                        {{-- PREVIEW MODERN TEMPLATE --}}
+                <div class="flex-1 bg-gray-100 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center overflow-y-auto">
+                    <div class="bg-white shadow-xl origin-top transform scale-75" style="width: 210mm; min-height: 297mm; padding: 0;">
+                        
+                        {{-- TEMPLATE: MODERN --}}
                         <div x-show="selectedTemplate === 'template'">
-                            <div :style="`background: linear-gradient(135deg, ${headerColor} 0%, ${accentColor} 100%); padding: 30px 35px; display: flex; gap: 25px; align-items: flex-start; border-bottom: 3px solid ${sectionBorderColor};`">
-                                <div style="width: 90px; height: 90px; border-radius: 50%; background: white; border: 3px solid white; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 700; overflow: hidden;" :style="`color: ${headerColor};`">
-                                    <img x-show="photoPreview" :src="photoPreview" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
-                                    <span x-show="!photoPreview" x-text="(fullName || 'A').charAt(0).toUpperCase()"></span>
+                            <div :style="`background: linear-gradient(135deg, ${headerColor} 0%, ${accentColor} 100%);`" class="p-8 flex items-center gap-6 text-white">
+                                <div class="w-24 h-24 rounded-full bg-white border-4 border-white overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                    <template x-if="photoPreview"><img :src="photoPreview" class="w-full h-full object-cover"></template>
+                                    <template x-if="!photoPreview"><span class="text-gray-300 text-3xl font-bold" x-text="fullName ? fullName.charAt(0) : 'A'"></span></template>
                                 </div>
                                 <div>
-                                    <h1 style="font-size: 28px; font-weight: 700; margin: 0; line-height: 1.2;" :style="`color: ${textColor};`" x-text="fullName || 'Your Name'"></h1>
-                                    <div style="font-size: 14px; margin-top: 3px; font-weight: 500;" :style="`color: ${textColor};`" x-text="profession || 'Your Profession'"></div>
-                                    <div style="font-size: 11px; margin-top: 10px; line-height: 1.4;" :style="`color: ${textColor};`" x-html="formatContactInfo()"></div>
+                                    <h1 class="text-3xl font-bold" :style="`color: ${headerTextColor}`" x-text="fullName || 'Nama Anda'"></h1>
+                                    <p class="text-lg opacity-90" :style="`color: ${headerTextColor}`" x-text="profession || 'Profesi Anda'"></p>
+                                    <div class="flex gap-4 text-xs mt-2 opacity-80" :style="`color: ${headerTextColor}`">
+                                        <span x-text="email"></span> | <span x-text="phone"></span> | <span x-text="address"></span>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div style="padding: 30px 35px;">
-                                <div x-show="summary">
-                                    <h2 style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding-left: 12px; margin-top: 0; margin-bottom: 12px;" :style="`color: ${textColor}; border-left: 4px solid ${sectionBorderColor};`">Professional Summary</h2>
-                                    <p style="font-size: 12px; line-height: 1.6;" :style="`color: ${textColor};`" x-text="summary"></p>
+                            
+                            <div class="p-8 space-y-6">
+                                <div>
+                                    <h3 class="font-bold uppercase tracking-widest mb-2 border-b-2 pb-1" :style="`color: ${textColor}; border-color: ${headerColor}`">Profile</h3>
+                                    <p class="text-sm text-gray-600" x-text="summary"></p>
+                                </div>
+                                
+                                {{-- Preview Pendidikan --}}
+                                <div>
+                                    <h3 class="font-bold uppercase tracking-widest mb-2 border-b-2 pb-1" :style="`color: ${textColor}; border-color: ${headerColor}`">Education</h3>
+                                    <div class="mb-2">
+                                        <p class="font-bold text-gray-800" x-text="university || 'Nama Universitas'"></p>
+                                        <p class="text-sm text-gray-600"><span x-text="major"></span> <span x-show="gpa">| GPA: <span x-text="gpa"></span></span></p>
+                                    </div>
                                 </div>
 
-                                <div x-show="skills">
-                                    <h2 style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; padding-left: 12px; margin-top: 20px; margin-bottom: 12px;" :style="`color: ${textColor}; border-left: 4px solid ${sectionBorderColor};`">Technical Skills</h2>
-                                    <p style="font-size: 11px; line-height: 1.6;" :style="`color: ${textColor};`" x-text="skills"></p>
+                                {{-- Preview Experience (Looping) --}}
+                                <div>
+                                    <h3 class="font-bold uppercase tracking-widest mb-2 border-b-2 pb-1" :style="`color: ${textColor}; border-color: ${headerColor}`">Experience</h3>
+                                    <template x-for="exp in experiences">
+                                        <div class="mb-4">
+                                            <div class="flex justify-between">
+                                                <p class="font-bold text-gray-800" x-text="exp.position || 'Posisi'"></p>
+                                                <p class="text-xs text-gray-500"><span x-text="exp.start_date"></span> - <span x-text="exp.end_date || 'Present'"></span></p>
+                                            </div>
+                                            <p class="text-sm text-gray-700 font-semibold" x-text="exp.company || 'Perusahaan'"></p>
+                                            <p class="text-xs text-gray-600 mt-1" x-text="exp.description"></p>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-bold uppercase tracking-widest mb-2 border-b-2 pb-1" :style="`color: ${textColor}; border-color: ${headerColor}`">Skills</h3>
+                                    <p class="text-sm text-gray-600" x-text="skills"></p>
                                 </div>
                             </div>
                         </div>
-
-                        {{-- PREVIEW ATS TEMPLATE --}}
-                        <div x-show="selectedTemplate === 'ats_template'" style="padding: 35px; font-family: Arial, sans-serif;">
-                            <div style="margin-bottom: 20px;">
-                                <h1 style="font-size: 24px; font-weight: bold; margin: 0; color: #333;" x-text="fullName || 'Your Name'"></h1>
-                                <p style="font-size: 13px; color: #666; margin: 5px 0;" x-text="profession || 'Your Profession'"></p>
-                                <p style="font-size: 12px; color: #666; margin: 5px 0;" x-html="formatContactInfo()"></p>
+                        
+                        {{-- TEMPLATE: ATS (Simple) --}}
+                        <div x-show="selectedTemplate === 'ats_template'" class="p-10 font-serif text-gray-900">
+                            <div class="text-center border-b-2 border-gray-800 pb-4 mb-4">
+                                <h1 class="text-3xl font-bold uppercase" x-text="fullName"></h1>
+                                <p class="text-sm mt-1" x-text="profession"></p>
+                                <p class="text-xs mt-1"><span x-text="email"></span> • <span x-text="phone"></span> • <span x-text="address"></span></p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h3 class="font-bold border-b border-gray-400 mb-2">SUMMARY</h3>
+                                <p class="text-sm" x-text="summary"></p>
                             </div>
 
-                            <div x-show="summary" style="margin-bottom: 15px;">
-                                <h2 style="font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #333; border-bottom: 1px solid #000;">PROFESSIONAL SUMMARY</h2>
-                                <p style="font-size: 12px; line-height: 1.5; color: #555;" x-text="summary"></p>
+                            <div class="mb-6">
+                                <h3 class="font-bold border-b border-gray-400 mb-2">EDUCATION</h3>
+                                <div class="flex justify-between">
+                                    <p class="font-bold text-sm" x-text="university"></p>
+                                    <p class="text-sm" x-show="gpa">GPA: <span x-text="gpa"></span></p>
+                                </div>
+                                <p class="text-sm italic" x-text="major"></p>
                             </div>
 
-                            <div x-show="skills" style="margin-bottom: 15px;">
-                                <h2 style="font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #333; border-bottom: 1px solid #000;">TECHNICAL SKILLS</h2>
-                                <p style="font-size: 12px; line-height: 1.5; color: #555;" x-text="skills"></p>
+                            <div class="mb-6">
+                                <h3 class="font-bold border-b border-gray-400 mb-2">EXPERIENCE</h3>
+                                <template x-for="exp in experiences">
+                                    <div class="mb-3">
+                                        <div class="flex justify-between">
+                                            <p class="font-bold text-sm" x-text="exp.company"></p>
+                                            <p class="text-xs"><span x-text="exp.start_date"></span> - <span x-text="exp.end_date"></span></p>
+                                        </div>
+                                        <p class="text-sm italic" x-text="exp.position"></p>
+                                        <p class="text-xs mt-1" x-text="exp.description"></p>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold border-b border-gray-400 mb-2">SKILLS</h3>
+                                <p class="text-sm" x-text="skills"></p>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -343,77 +373,83 @@
     </div>
 
     <script>
-        function cvGenerator() {
-            return {
-                zoomLevel: 100,
-                dragover: false,
-                showCustomize: false,
-                photoPreview: @if($cv && $cv->photo_path) '{{ asset("storage/" . $cv->photo_path) }}' @else null @endif,
-                selectedTemplate: '{{ $selectedTemplate ?? "template" }}',
-                fullName: '{{ old("full_name", $cv->full_name ?? auth()->user()?->name ?? "") }}',
-                profession: '{{ old("profession", $cv->profession ?? "") }}',
-                email: '{{ old("email", $cv->email ?? auth()->user()?->email ?? "") }}',
-                phone: '{{ old("phone", $cv->phone ?? "") }}',
-                address: '{{ old("address", $cv->address ?? "") }}',
-                summary: `{{ old("summary", $cv->summary ?? "") }}`.replace(/\n/g, ' '),
-                skills: '{{ old("skills", $cv->skills ?? "") }}',
-                
-                // Customize Colors
-                headerColor: '#FFB5B6',
-                headerTextColor: '#FFFFFF',
-                accentColor: '#FFE5D9',
-                textColor: '#2c3e50',
-                sectionBorderColor: '#FFB5B6',
-                updatePreview(event) {
-                    if (event.target.name === 'full_name') this.fullName = event.target.value;
-                    if (event.target.name === 'profession') this.profession = event.target.value;
-                    if (event.target.name === 'email') this.email = event.target.value;
-                    if (event.target.name === 'phone') this.phone = event.target.value;
-                    if (event.target.name === 'address') this.address = event.target.value;
-                    if (event.target.name === 'summary') this.summary = event.target.value;
-                    if (event.target.name === 'skills') this.skills = event.target.value;
-                },
+    function cvGenerator() {
+        // 1. KITA SIAPKAN DATANYA DALAM SATU PAKET PHP
+        // Abaikan jika VS Code memberi garis merah di baris ini, itu normal.
+        const cvData = {!! json_encode([
+            'fullName'   => old('full_name', $cv?->full_name ?? auth()->user()?->name ?? ''),
+            'profession' => old('profession', $cv?->profession ?? ''),
+            'email'      => old('email', $cv?->email ?? auth()->user()?->email ?? ''),
+            'phone'      => old('phone', $cv?->phone ?? ''),
+            'address'    => old('address', $cv?->address ?? ''),
+            'summary'    => old('summary', $cv?->summary ?? ''),
+            'skills'     => old('skills', $cv?->skills ?? ''),
+            
+            // Data Baru (Univ & IPK)
+            'university' => old('university', $cv?->university ?? ''),
+            'major'      => old('major', $cv?->major ?? ''),
+            'gpa'        => old('gpa', $cv?->gpa ?? ''),
+            
+            // Pengalaman Kerja (Pastikan array kosong jika null)
+            'experiences'=> $cv && $cv->workExperiences ? $cv->workExperiences : []
+        ]) !!};
 
-                handlePhotoSelect(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            this.photoPreview = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                },
+        // 2. KEMBALIKAN OBJECT ALPHINE JS
+        return {
+            // Ambil semua data dari paket di atas
+            fullName: cvData.fullName,
+            profession: cvData.profession,
+            email: cvData.email,
+            phone: cvData.phone,
+            address: cvData.address,
+            summary: cvData.summary,
+            skills: cvData.skills,
+            university: cvData.university,
+            major: cvData.major,
+            gpa: cvData.gpa,
+            experiences: cvData.experiences,
 
-                handleDrop(event) {
-                    event.preventDefault();
-                    this.dragover = false;
-                    const files = event.dataTransfer.files;
-                    if (files.length > 0) {
-                        this.$refs.photoInput.files = files;
-                        this.handlePhotoSelect({ target: this.$refs.photoInput });
-                    }
-                },
+            showCustomize: false,
+            
+            // Foto Preview (Logika Blade sederhana, aman)
+            photoPreview: @if($cv && $cv->photo_path) '{{ asset("storage/" . $cv->photo_path) }}' @else null @endif,
+            
+            selectedTemplate: '{{ $selectedTemplate ?? "template" }}',
 
-                removePhoto() {
-                    this.photoPreview = null;
-                    this.$refs.photoInput.value = '';
-                },
+            // Warna Tampilan Default
+            headerColor: '#FFB5B6',
+            headerTextColor: '#FFFFFF',
+            accentColor: '#FFE5D9',
+            textColor: '#2c3e50',
+            sectionBorderColor: '#FFB5B6',
 
-                formatContactInfo() {
-                    let parts = [];
-                    if (this.email) parts.push(`📧 ${this.email}`);
-                    if (this.phone) parts.push(`📱 ${this.phone}`);
-                    if (this.address) parts.push(`📍 ${this.address}`);
-                    return parts.map(p => `<span style="display: inline-block; margin-right: 12px;">${p}</span>`).join('');
-                },
-
-                onFormSubmit(event) {
-                    // Allow normal form submission
+            // Fungsi Handle Upload Foto
+            handlePhotoSelect(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { this.photoPreview = e.target.result; };
+                    reader.readAsDataURL(file);
                 }
+            },
+
+            // Fungsi Tambah Pengalaman Kerja
+            addExperience() {
+                this.experiences.push({
+                    company: '',
+                    position: '',
+                    start_date: '',
+                    end_date: '',
+                    description: ''
+                });
+            },
+            
+            // Fungsi Hapus Pengalaman Kerja
+            removeExperience(index) {
+                this.experiences.splice(index, 1);
             }
         }
-    </script>
-
+    }
+</script>  
 </body>
 </html>

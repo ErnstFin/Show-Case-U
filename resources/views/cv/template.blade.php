@@ -1,296 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CV {{ $cv->full_name }}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - {{ $cv->full_name }}</title>
     <style>
-        /* ===== RESET & BASE ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* RESET & BASIC SETUP */
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
             color: #2c3e50;
-            background: white;
             line-height: 1.6;
-        }
-
-        /* ===== PAGE LAYOUT ===== */
-        .cv-container {
-            max-width: 8.5in;
-            height: 11in;
-            margin: 0 auto;
-            background: white;
+            margin: 0;
             padding: 0;
+            background: #fff;
+        }
+        
+        /* HEADER SECTION (PINK) */
+        .header {
+            background-color: #FFB5B6; /* Warna Pink Brand */
+            padding: 40px;
+            color: white;
+            position: relative;
+        }
+        
+        /* FOTO PROFIL CONTAINER (FIX FOTO GEPENG) */
+        .profile-img-container { 
+            width: 100px;
+            height: 100px;
+            border-radius: 50%; /* Membuat lingkaran */
+            border: 4px solid white;
+            overflow: hidden; /* CRUCIAL: Memotong gambar di luar lingkaran */
+            float: left;
+            margin-right: 30px;
+            background-color: #fff;
+            display: block; 
         }
 
-        /* ===== HEADER SECTION (With Gradient) ===== */
-        .cv-header {
-            background: linear-gradient(135deg, #FFB5B6 0%, #FFE5D9 100%);
-            padding: 30px 35px;
-            display: flex;
-            gap: 25px;
-            align-items: flex-start;
-            border-bottom: 3px solid #FFB5B6;
+        /* GAYA GAMBAR DI DALAM CONTAINER */
+        .profile-img-container img {
+            width: 100%; 
+            height: auto; /* <--- CRITICAL FIX: Menggunakan auto agar rasio terjaga */
+            object-fit: cover; 
+            display: block;
         }
 
-        .header-avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: white;
-            border: 3px solid white;
-            overflow: hidden;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: 700;
-            color: #FFB5B6;
+        .name-title {
+            overflow: hidden; 
+            padding-top: 15px;
         }
 
-        .header-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        h1 { margin: 0; font-size: 32px; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; }
+        .profession { font-size: 18px; font-weight: normal; opacity: 0.9; margin-top: 5px; margin-bottom: 15px; }
 
-        .header-info h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin: 0;
-            line-height: 1.2;
-        }
+        .contact-info { font-size: 12px; margin-top: 10px; opacity: 0.9; }
+        .contact-item { display: inline-block; margin-right: 15px; }
 
-        .header-info .profession {
-            font-size: 14px;
-            color: #555;
-            margin-top: 3px;
-            font-weight: 500;
-        }
+        .content { padding: 40px; }
+        .section { margin-bottom: 35px; }
+        .section-title { font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: #2c3e50; border-bottom: 2px solid #FFB5B6; padding-bottom: 5px; margin-bottom: 15px; }
+        p { margin: 0 0 10px 0; font-size: 13px; color: #555; text-align: justify; }
 
-        .header-info .contact {
-            font-size: 11px;
-            color: #666;
-            margin-top: 10px;
-            line-height: 1.4;
-        }
+        /* PENDIDIKAN & PENGALAMAN ITEM */
+        .item { margin-bottom: 15px; }
+        .item-header { display: table; width: 100%; margin-bottom: 2px; }
+        .item-title { display: table-cell; font-weight: bold; font-size: 14px; color: #333; width: 70%; }
+        .item-date { display: table-cell; text-align: right; font-size: 12px; color: #888; font-style: italic; width: 30%; }
+        .item-subtitle { font-weight: bold; font-size: 13px; color: #FFB5B6; margin-bottom: 5px; }
 
-        .header-info .contact span {
-            display: inline-block;
-            margin-right: 12px;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .cv-body {
-            padding: 30px 35px;
-        }
-
-        /* ===== SECTION HEADERS ===== */
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #2c3e50;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border-left: 4px solid #FFB5B6;
-            padding-left: 12px;
-            margin-top: 20px;
-            margin-bottom: 12px;
-        }
-
-        .section-title:first-of-type {
-            margin-top: 0;
-        }
-
-        /* ===== SUMMARY SECTION ===== */
-        .summary-text {
-            font-size: 12px;
-            color: #444;
-            line-height: 1.6;
-            margin-bottom: 3px;
-        }
-
-        /* ===== EXPERIENCE BLOCK ===== */
-        .job-block {
-            margin-bottom: 18px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e8e8e8;
-        }
-
-        .job-block:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .job-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin: 0 0 4px 0;
-        }
-
-        .job-company {
-            font-size: 11px;
-            color: #666;
-            margin: 0;
-            font-weight: 500;
-        }
-
-        .job-description {
-            font-size: 11px;
-            color: #555;
-            margin-top: 6px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        /* ===== EDUCATION BLOCK ===== */
-        .edu-block {
-            margin-bottom: 16px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid #e8e8e8;
-        }
-
-        .edu-block:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .edu-degree {
-            font-size: 13px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin: 0 0 3px 0;
-        }
-
-        .edu-school {
-            font-size: 11px;
-            color: #666;
-            margin: 0;
-            font-weight: 500;
-        }
-
-        .edu-gpa {
-            font-size: 10px;
-            color: #999;
-            margin-top: 3px;
-        }
-
-        /* ===== SKILLS SECTION ===== */
-        .skills-text {
-            font-size: 11px;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        /* ===== UTILITY ===== */
-        .text-muted {
-            color: #999;
-            font-size: 10px;
-        }
+        /* CLEARFIX */
+        .clearfix::after { content: ""; clear: both; display: table; }
     </style>
 </head>
 <body>
 
-<div class="cv-container">
-    
-    {{-- HEADER WITH GRADIENT --}}
-    <div class="cv-header">
-        <div class="header-avatar">
-            @if($cv->photo_path)
-                <img src="{{ public_path('storage/' . $cv->photo_path) }}" alt="Avatar">
-            @elseif($cv->user->avatar && str_contains($cv->user->avatar, 'storage'))
-                <img src="{{ public_path($cv->user->avatar) }}" alt="Avatar">
-            @else
+    <div class="header clearfix">
+        @if($cv->photo_path)
+            <div class="profile-img-container">
+                <img src="{{ public_path('storage/' . $cv->photo_path) }}" alt="Profile Image" style="object-fit: cover;">
+            </div>
+        @else
+            <div class="profile-img-container" style="display: flex; align-items: center; justify-content: center; color: #FFB5B6; font-size: 40px; font-weight: bold;">
                 {{ substr($cv->full_name, 0, 1) }}
-            @endif
-        </div>
-        
-        <div class="header-info">
+            </div>
+        @endif
+
+        <div class="name-title">
             <h1>{{ $cv->full_name }}</h1>
             <div class="profession">{{ $cv->profession }}</div>
-            <div class="contact">
-                <span>📧 {{ $cv->email }}</span>
-                @if($cv->phone)
-                <span>📱 {{ $cv->phone }}</span>
-                @endif
-                @if($cv->address)
-                <span>📍 {{ $cv->address }}</span>
-                @endif
+            
+            <div class="contact-info">
+                <span class="contact-item">{{ $cv->email }}</span>
+                @if($cv->phone) <span class="contact-item">| &nbsp; {{ $cv->phone }}</span> @endif
+                @if($cv->address) <span class="contact-item">| &nbsp; {{ $cv->address }}</span> @endif
             </div>
         </div>
     </div>
 
-    {{-- BODY CONTENT --}}
-    <div class="cv-body">
-        
-        {{-- PROFESSIONAL SUMMARY --}}
+    <div class="content">
+
         @if($cv->summary)
-        <div>
-            <h2 class="section-title">Professional Summary</h2>
-            <p class="summary-text">{{ $cv->summary }}</p>
+        <div class="section">
+            <div class="section-title">Profile</div>
+            <p>{{ $cv->summary }}</p>
         </div>
         @endif
 
-        {{-- PROFESSIONAL EXPERIENCE --}}
-        @if($cv->experience)
-        <div>
-            <h2 class="section-title">Professional Experience</h2>
-            @foreach(explode("\n\n", trim($cv->experience)) as $exp)
-                @if(trim($exp))
-                <div class="job-block">
-                    @php
-                        $lines = array_filter(array_map('trim', explode("\n", $exp)));
-                        $title = $lines[0] ?? '';
-                        $details = implode("\n", array_slice($lines, 1));
-                    @endphp
-                    <h3 class="job-title">{{ $title }}</h3>
-                    <p class="job-description">{{ $details }}</p>
+        @if($cv->university)
+        <div class="section">
+            <div class="section-title">Education</div>
+            <div class="item">
+                <div class="item-header">
+                    <div class="item-title">{{ $cv->university }}</div>
                 </div>
-                @endif
-            @endforeach
-        </div>
-        @endif
-
-        {{-- EDUCATION --}}
-        @if($cv->education)
-        <div>
-            <h2 class="section-title">Education & Qualifications</h2>
-            @foreach(explode("\n\n", trim($cv->education)) as $edu)
-                @if(trim($edu))
-                <div class="edu-block">
-                    @php
-                        $lines = array_filter(array_map('trim', explode("\n", $edu)));
-                        $degree = $lines[0] ?? '';
-                        $school = $lines[1] ?? '';
-                        $extra = implode(" | ", array_slice($lines, 2));
-                    @endphp
-                    <h3 class="edu-degree">{{ $degree }}</h3>
-                    <p class="edu-school">{{ $school }}</p>
-                    @if($extra)
-                    <p class="edu-gpa">{{ $extra }}</p>
+                <div class="item-subtitle">
+                    {{ $cv->major ?? 'Jurusan' }} 
+                    @if($cv->gpa) 
+                        <span style="color: #555; font-weight: normal;">| IPK: {{ $cv->gpa }}</span> 
                     @endif
                 </div>
-                @endif
-            @endforeach
+            </div>
         </div>
         @endif
 
-        {{-- SKILLS --}}
+        @if($cv->workExperiences && $cv->workExperiences->count() > 0)
+        <div class="section">
+            <div class="section-title">Experience</div>
+            
+            @foreach($cv->workExperiences as $exp)
+            <div class="item">
+                <div class="item-header">
+                    <div class="item-title">{{ $exp->position }}</div>
+                    <div class="item-date">
+                        {{ \Carbon\Carbon::parse($exp->start_date)->format('M Y') }} - 
+                        {{ $exp->is_current ? 'Present' : ($exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('M Y') : 'Present') }}
+                    </div>
+                </div>
+                <div class="item-subtitle">{{ $exp->company }}</div>
+                @if($exp->description)
+                    <p>{{ $exp->description }}</p>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        @else
+            @if($cv->experience)
+            <div class="section">
+                <div class="section-title">Experience (Data Lama)</div>
+                <p>{!! nl2br(e($cv->experience)) !!}</p>
+            </div>
+            @endif
+        @endif
+
         @if($cv->skills)
-        <div>
-            <h2 class="section-title">Technical Skills</h2>
-            <p class="skills-text">{{ $cv->skills }}</p>
+        <div class="section">
+            <div class="section-title">Skills</div>
+            <p>{{ $cv->skills }}</p>
         </div>
         @endif
 
     </div>
-
-</div>
 
 </body>
 </html>

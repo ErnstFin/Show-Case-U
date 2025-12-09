@@ -1,128 +1,91 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilih Template CV - ShowCase U</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'brand-pink': '#FFB5B6', 'brand-peach': '#FFE5D9',
-                        'brand-white': '#FFFFFF', 'brand-sky': '#D6EBF2', 'brand-blue': '#A3C4D9',
-                    },
-                    fontFamily: { 'poppins': ['Poppins', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style> body { font-family: 'Poppins', sans-serif; } </style>
+    <title>CV - {{ $cv->full_name }}</title>
+    <style>
+        body { font-family: sans-serif; color: #2c3e50; line-height: 1.6; margin: 0; padding: 0; }
+        .header { background-color: #FFB5B6; padding: 30px; color: white; overflow: hidden; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; float: left; margin-right: 20px; object-fit: cover; background: #fff; }
+        .name-title { padding-top: 10px; }
+        h1 { margin: 0; font-size: 28px; text-transform: uppercase; }
+        .profession { font-size: 16px; opacity: 0.9; margin-bottom: 5px; }
+        .contact { font-size: 11px; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 25px; }
+        .section-title { font-size: 14px; font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #FFB5B6; padding-bottom: 5px; margin-bottom: 10px; color: #2c3e50; }
+        .item { margin-bottom: 15px; }
+        .item-header { overflow: hidden; margin-bottom: 2px; }
+        .left { float: left; font-weight: bold; color: #333; }
+        .right { float: right; font-size: 12px; color: #7f8c8d; font-style: italic; }
+        .subtitle { font-size: 13px; color: #e57373; font-weight: bold; }
+        p { margin: 2px 0 0 0; font-size: 12px; color: #555; text-align: justify; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+    </style>
 </head>
-<body class="bg-brand-sky min-h-screen py-10 px-4">
-
-    <div class="max-w-5xl mx-auto mb-6 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('dashboard') }}" class="bg-white p-2 rounded-full shadow-sm hover:bg-brand-peach transition text-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-            </a>
-            <h1 class="text-2xl font-bold text-gray-700">CV Generator</h1>
-        </div>
-    </div>
-
-    <div class="bg-white w-full max-w-5xl mx-auto rounded-[35px] shadow-xl overflow-hidden relative border border-white">
-        
-        <div class="bg-brand-peach px-8 py-6">
-            <h2 class="text-gray-800 font-bold text-3xl">Pilih Template CV Anda</h2>
-            <p class="text-sm text-gray-600 mt-2">Pilih desain yang paling cocok untuk karier Anda. Anda bisa menggantinya kapan saja.</p>
-        </div>
-
-        <div class="p-8 md:p-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                
-                {{-- Pilihan 1: Template Modern (Visual) --}}
-                <div class="bg-white border-2 border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden hover:-translate-y-2">
-                    <div class="p-6 bg-gradient-to-r from-brand-peach to-orange-100">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Template Modern</h3>
-                        <p class="text-sm text-gray-600">Cocok untuk industri kreatif atau posisi yang mengutamakan desain dan visual.</p>
-                    </div>
-                    {{-- Preview Image --}}
-                    <div class="relative h-80 bg-gray-50 border-t border-gray-200 overflow-hidden flex items-center justify-center">
-                        <img src="/images/placeholder-modern.svg" alt="Preview Template Modern" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 pointer-events-none"></div>
-                    </div>
-                    <div class="p-6 border-t border-gray-100">
-                        <ul class="text-sm text-gray-600 space-y-2 mb-6">
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-pink flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Desain modern dan menarik</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-pink flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Cocok untuk portofolio visual</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-pink flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Format profesional</span>
-                            </li>
-                        </ul>
-                        <a href="{{ route('cv.create', ['template' => 'template']) }}" class="w-full bg-brand-pink text-white px-6 py-3 rounded-xl font-bold hover:bg-red-300 transition duration-150 text-center block">
-                            Pilih Template Ini →
-                        </a>
-                    </div>
-                </div>
-
-                {{-- Pilihan 2: Template ATS Friendly (Sederhana) --}}
-                <div class="bg-white border-2 border-gray-100 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden hover:-translate-y-2">
-                    <div class="p-6 bg-gradient-to-r from-blue-100 to-brand-sky">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Template ATS Friendly</h3>
-                        <p class="text-sm text-gray-600">Sederhana dan optimal dibaca oleh sistem pelacakan pelamar (ATS) perusahaan.</p>
-                    </div>
-                    {{-- Preview Image --}}
-                    <div class="relative h-80 bg-gray-50 border-t border-gray-200 overflow-hidden flex items-center justify-center">
-                        <img src="/images/placeholder-ats.svg" alt="Preview Template ATS" class="w-full h-full object-cover" onerror="this.src='/images/placeholder-ats.svg'">
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/10 pointer-events-none"></div>
-                    </div>
-                    <div class="p-6 border-t border-gray-100">
-                        <ul class="text-sm text-gray-600 space-y-2 mb-6">
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-blue flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Kompatibel dengan ATS</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-blue flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Format sederhana dan clean</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-blue flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                </svg>
-                                <span>Fokus pada konten</span>
-                            </li>
-                        </ul>
-                        <a href="{{ route('cv.create', ['template' => 'ats_template']) }}" class="w-full bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-cyan-400 transition duration-150 text-center block">
-                            Pilih Template Ini →
-                        </a>
-                    </div>
-                </div>
-                
+<body>
+    <div class="header">
+        @if($cv->photo_path)
+            <img src="{{ public_path('storage/' . $cv->photo_path) }}" class="profile-img">
+        @else
+            <div class="profile-img" style="text-align: center; line-height: 100px; color: #FFB5B6; font-size: 40px; font-weight: bold;">{{ substr($cv->full_name, 0, 1) }}</div>
+        @endif
+        <div class="name-title">
+            <h1>{{ $cv->full_name }}</h1>
+            <div class="profession">{{ $cv->profession }}</div>
+            <div class="contact">
+                {{ $cv->email }} @if($cv->phone) | {{ $cv->phone }} @endif @if($cv->address) | {{ $cv->address }} @endif
             </div>
         </div>
     </div>
 
+    <div class="content">
+        @if($cv->summary)
+        <div class="section">
+            <div class="section-title">Profile</div>
+            <p>{{ $cv->summary }}</p>
+        </div>
+        @endif
+
+        <div class="section">
+            <div class="section-title">Education</div>
+            <div class="item">
+                <div class="item-header">
+                    <div class="left">{{ $cv->university ?? 'Nama Universitas Belum Diisi' }}</div>
+                </div>
+                <div class="subtitle">
+                    {{ $cv->major ?? 'Jurusan' }} 
+                    @if($cv->gpa) <span style="color: #555; font-weight: normal;">| IPK: {{ $cv->gpa }}</span> @endif
+                </div>
+            </div>
+        </div>
+
+        @if($cv->workExperiences->count() > 0)
+        <div class="section">
+            <div class="section-title">Experience</div>
+            @foreach($cv->workExperiences as $exp)
+            <div class="item">
+                <div class="item-header">
+                    <div class="left">{{ $exp->position }}</div>
+                    <div class="right">
+                        {{ \Carbon\Carbon::parse($exp->start_date)->format('M Y') }} - 
+                        {{ $exp->is_current ? 'Present' : ($exp->end_date ? \Carbon\Carbon::parse($exp->end_date)->format('M Y') : 'Present') }}
+                    </div>
+                </div>
+                <div class="subtitle">{{ $exp->company }}</div>
+                @if($exp->description)<p>{{ $exp->description }}</p>@endif
+            </div>
+            @endforeach
+        </div>
+        @endif
+
+        @if($cv->skills)
+        <div class="section">
+            <div class="section-title">Skills</div>
+            <p>{{ $cv->skills }}</p>
+        </div>
+        @endif
+    </div>
 </body>
 </html>

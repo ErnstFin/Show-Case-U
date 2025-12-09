@@ -23,11 +23,19 @@ class Cv extends Model
         'experience',
         'template',
         'photo_path',
+        'university',
+        'major',
+        'gpa',
     ];
 
     // Relasi: CV milik User
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function workExperiences()
+    {
+        return $this->hasMany(WorkExperience::class);
     }
 }
