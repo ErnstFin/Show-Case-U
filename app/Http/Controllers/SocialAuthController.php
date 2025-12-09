@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Config;
 
 class SocialAuthController extends Controller
 {
@@ -21,18 +22,18 @@ class SocialAuthController extends Controller
     {
         // 1. Ambil data user dari Google
         // Jika ada masalah konfigurasi (Client ID/Secret salah), error akan muncul di baris ini
-        $googleUser = Socialite::driver('google')->stateless()->user();
+        $googleUser = Socialite::driver('google')->user();
 
         // 2. Cari user di database berdasarkan google_id atau email
-        $user = User::where('google_id', $googleUser->id)
-                    ->orWhere('email', $googleUser->email)
+        $user = User::where('google_id', $googleUser->getId())
+                    ->orWhere('email', $googleUser->getEmail())
                     ->first();
 
         if ($user) {
             // A. JIKA USER SUDAH ADA (Login)
             // Pastikan google_id tercatat (untuk user yang awalnya daftar manual)
             if (!$user->google_id) {
-                $user->update(['google_id' => $googleUser->id]);
+                $user->update(['google_id' => $googleUser->getId()]);
             }
             
             Auth::login($user);
@@ -41,11 +42,11 @@ class SocialAuthController extends Controller
         } else {
             // B. JIKA USER BELUM ADA (Daftar & Login)
             $newUser = User::create([
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'google_id' => $googleUser->id,
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'google_id' => $googleUser->getId(),
                 'password' => Hash::make('password-acak-' . rand(1000,9999)), // Password dummy
-                'avatar' => $googleUser->avatar, 
+                'avatar' => $googleUser->getAvatar(), 
                 'email_verified_at' => now(), 
             ]);
 

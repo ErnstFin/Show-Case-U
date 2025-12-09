@@ -59,4 +59,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Portfolio::class);
     }
+
+    /**
+     * Relasi ke tabel CVs
+     * Satu user bisa punya satu CV
+     */
+    public function cv()
+    {
+        return $this->hasOne(Cv::class);
+    }
 }

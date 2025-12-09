@@ -13,7 +13,8 @@ class PortfolioController extends Controller
     public function index()
     {
         $portfolios = Portfolio::where('user_id', Auth::id())->latest()->get();
-        return view('dashboard', compact('portfolios'));
+        $cv = \App\Models\Cv::where('user_id', Auth::id())->first();
+        return view('dashboard', compact('portfolios', 'cv'));
     }
 
     // 2. Form Upload

@@ -20,6 +20,12 @@
 <body>
     <div class="container">
         
+        @if($cv->photo_path)
+        <div style="text-align: center; margin-bottom: 15px;">
+            <img src="{{ public_path('storage/' . $cv->photo_path) }}" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+        </div>
+        @endif
+        
         <h1>{{ $cv->full_name }}</h1>
         <p class="contact-info">
             <span>{{ $cv->profession }}</span> |

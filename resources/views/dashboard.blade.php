@@ -35,7 +35,7 @@
                     <span class="text-2xl font-bold text-gray-700">ShowCase U</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('cv.create') }}" class="bg-brand-sky text-gray-600 border border-brand-blue px-5 py-2.5 rounded-2xl text-sm font-bold hover:bg-white transition hidden sm:block">
+                    <a href="{{ route('cv.select_template') }}" class="bg-brand-sky text-gray-600 border border-brand-blue px-5 py-2.5 rounded-2xl text-sm font-bold hover:bg-white transition hidden sm:block">
                         Buat CV
                     </a>
 
@@ -59,14 +59,15 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {{-- CV SECTION AT TOP --}}
+        <div class="mb-10">
+            @include('cv.dashboard-cv-card')
+        </div>
+
+        {{-- PORTFOLIO SECTION --}}
         <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-bold text-gray-700">Dashboard Saya</h2>
+            <h2 class="text-2xl font-bold text-gray-700">Portfolio Saya</h2>
             <div class="flex items-center gap-2">
-                <a href="{{ route('subscription.index') }}" class="w-8 h-8 flex items-center justify-center bg-yellow-100 text-yellow-500 rounded-full hover:bg-yellow-200 transition" title="Langganan Premium">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 011.397 1.398l-.8 1.6 1.582 3.954a1 1 0 01-1.323 1H4.323a1 1 0 01-1.323-1l1.582-3.954-.8-1.6a1 1 0 011.397-1.398l1.599.8L9 4.323V3a1 1 0 011-1zm-5 8.274V16a1 1 0 001 1h8a1 1 0 001-1v-5.726l-1.356.678a1 1 0 01-1.171-.138l-1.57-1.047-1.57 1.047a1 1 0 01-1.171.138L5 10.274zm2.607-4.21l.86.43a1 1 0 01.498.766l.23 2.303.23-2.303a1 1 0 01.498-.766l.86-.43-1.486-.595L10 4.16l-1.697 1.697-1.486.595z" clip-rule="evenodd" />
-                    </svg>
-                </a>
                 <span class="bg-white px-4 py-1 rounded-full text-xs font-medium text-brand-blue shadow-sm">
                     {{ $portfolios->count() }} Karya
                 </span>

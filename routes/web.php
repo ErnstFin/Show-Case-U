@@ -6,7 +6,6 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CvController;
-use App\Http\Controllers\SubscriptionController; // <--- INI YG BARU DITAMBAH
 
 // --- 1. HALAMAN PUBLIK ---
 Route::get('/', function () {
@@ -47,10 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/akun', [ProfileController::class, 'update'])->name('profile.update');
 
     // CV Generator
-    Route::get('/buat-cv', [CvController::class, 'create'])->name('cv.create');
+    Route::get('/pilih-template', function () {
+        return view('cv.select_template');
+    })->name('cv.select_template');
+    
+    Route::get('/buat-cv/{template?}', [CvController::class, 'create'])->name('cv.create');
     Route::post('/buat-cv', [CvController::class, 'store'])->name('cv.store');
+    Route::get('/cv/{id}/edit', [CvController::class, 'edit'])->name('cv.edit');
+    Route::put('/cv/{id}', [CvController::class, 'update'])->name('cv.update');
+    Route::delete('/cv/{id}', [CvController::class, 'destroy'])->name('cv.destroy');
     Route::get('/download-cv', [CvController::class, 'download'])->name('cv.download');
-
-    // Langganan (INI YANG BIKIN ERROR TADI)
-    Route::get('/langganan', [SubscriptionController::class, 'index'])->name('subscription.index');
 });

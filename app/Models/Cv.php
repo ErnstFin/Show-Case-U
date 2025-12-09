@@ -21,6 +21,8 @@ class Cv extends Model
         'skills',
         'education',
         'experience',
+        'template',
+        'photo_path',
     ];
 
     // Relasi: CV milik User
