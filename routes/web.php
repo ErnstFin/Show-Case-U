@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SocialAuthController;
@@ -46,10 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/akun', [ProfileController::class, 'update'])->name('profile.update');
 
     // CV Generator
-    Route::get('/pilih-template', function () {
-        return view('cv.select_template');
-    })->name('cv.select_template');
-    
+    Route::get('/pilih-template', [CvController::class, 'create'])->name('cv.select_template');
     Route::get('/buat-cv/{template?}', [CvController::class, 'create'])->name('cv.create');
     Route::post('/buat-cv', [CvController::class, 'store'])->name('cv.store');
     Route::get('/cv/{id}/edit', [CvController::class, 'edit'])->name('cv.edit');
